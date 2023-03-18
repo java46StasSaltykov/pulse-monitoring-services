@@ -14,19 +14,18 @@ import org.springframework.messaging.support.GenericMessage;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.*;
 import telran.monitoring.model.*;
-import telran.monitoring.service.AnalyzerService;
+import telran.monitoring.service.*;
 
 @SpringBootTest
-@Import(TestChannelBinderConfiguration.class) 									 
-public class AnalyzerControllerTest {
+@Import(TestChannelBinderConfiguration.class)
+public class AvgReducerControllerTest {
 	
-	private static final long PATIENT_ID_NO_JUMP = 123;
+	private static final long PATIENT_ID_NO_AVG = 123;
 	private static final int VALUE = 100;
-	private static final long PATIENT_ID_JUMP = 125;
-	private static final int VALUE_JUMP = 240;
-	
+	private static final long PATIENT_ID_AVG = 125;
+
 	@MockBean
-	AnalyzerService service;
+	AvgReducerService service;
 	
 	@Autowired
 	InputDestination producer;
@@ -34,35 +33,35 @@ public class AnalyzerControllerTest {
 	@Autowired
 	OutputDestination consumer;
 	
-	PulseProbe probeNoJump = new PulseProbe(PATIENT_ID_NO_JUMP, 0, 0, VALUE);
-	PulseProbe probeJump = new PulseProbe(PATIENT_ID_JUMP, 0, 0, VALUE);
-	PulseJump jump = new PulseJump(PATIENT_ID_JUMP, VALUE, VALUE_JUMP);
+	PulseProbe probeNoAvg = new PulseProbe(PATIENT_ID_NO_AVG, 0, 0, VALUE);
+	PulseProbe probeAvgExpected = new PulseProbe(PATIENT_ID_AVG, 0, 0, VALUE);
 
 	String bindingNameProducer = "pulseProbeConsumer-in-0";
-	@Value("${app.jumps.binding.name}")
+	
+	@Value("${app.avg.binding.name}")
 	String bindingNameConsumer;
 
 	@BeforeEach
 	void mockingService() {
-		when(service.processPulseProbe(probeJump)).thenReturn(jump);
-		when(service.processPulseProbe(probeNoJump)).thenReturn(null);
+		when(service.reduce(probeAvgExpected)).thenReturn(VALUE);
+		when(service.reduce(probeNoAvg)).thenReturn(null);
 	}
 
 	@Test
-	void receivingProbNoJump() {
-		producer.send(new GenericMessage<PulseProbe>(probeNoJump), bindingNameProducer);
+	void receivingProbNoAvg() {
+		producer.send(new GenericMessage<PulseProbe>(probeNoAvg), bindingNameProducer);
 		Message<byte[]> message = consumer.receive(10, bindingNameConsumer);
 		assertNull(message);
 	}
 
 	@Test
-	void receivingProbJump() throws StreamReadException, DatabindException, IOException {
-		producer.send(new GenericMessage<PulseProbe>(probeJump), bindingNameProducer);
+	void receivingProbAvg() throws StreamReadException, DatabindException, IOException {
+		producer.send(new GenericMessage<PulseProbe>(probeAvgExpected), bindingNameProducer);
 		Message<byte[]> message = consumer.receive(10, bindingNameConsumer);
 		assertNotNull(message);
 		ObjectMapper mapper = new ObjectMapper();
-		PulseJump jump = mapper.readValue(message.getPayload(), PulseJump.class);
-		assertEquals(this.jump, jump);
+		PulseProbe probeAvgActual = mapper.readValue(message.getPayload(), PulseProbe.class);
+		assertEquals(probeAvgExpected, probeAvgActual);
 	}
 
 }
