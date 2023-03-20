@@ -1,4 +1,4 @@
-package telra.monitoring.service;
+package telran.monitoring.service;
 
 import telran.monitoring.model.*;
 

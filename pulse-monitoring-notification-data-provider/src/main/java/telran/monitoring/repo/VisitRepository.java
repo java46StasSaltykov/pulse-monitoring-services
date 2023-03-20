@@ -1,12 +1,12 @@
 package telran.monitoring.repo;
 
-import org.springframework.data.jpa.repository.*;
-import telran.monitoring.entities.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import telran.monitoring.entities.Visit;
 
-public interface VisitRepository extends JpaRepository<Visit, Long>  {
+public interface VisitRepository extends JpaRepository<Visit, Long> {
 	
-	@Query(value = "select doctor from doctors join visits on doctors.email = visits.email"
-			+ " join patients on visits.id = patients.id where patient.id = :patientId order by date desc limit 1", nativeQuery = true)
-	Doctor lastVisit(long patientId);
-
+	@Query(value = "select doctor_email from visits where patient_id = :patientId order by date desc limit 1", nativeQuery = true)
+	String getDoctorEmail(long patientId);
+	
 }

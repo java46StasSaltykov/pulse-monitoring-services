@@ -1,7 +1,5 @@
 package telran.monitoring.entities;
 
-import java.util.List;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -9,14 +7,9 @@ import jakarta.persistence.*;
 public class Patient {
 	
 	@Id
-	@Column(name = "id")
 	long id;
 	
-	@Column(name = "name")
 	String name;
-	
-	@OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
-	List<Visit> visits;
 
 	public Patient(long id, String name) {
 		this.id = id;
