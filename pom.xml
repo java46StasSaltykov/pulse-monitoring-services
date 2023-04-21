@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.0.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>telran.monitoring</groupId>
 	<artifactId>pulse-monitoring-services</artifactId>
@@ -35,7 +36,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -55,6 +59,11 @@
 		<dependency>
 			<groupId>telran.monitoring</groupId>
 			<artifactId>pulse-monitoring-dto</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>telran.exceptions</groupId>
+			<artifactId>exceptions-handling</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
@@ -84,5 +93,10 @@
 		<module>pulse-monitoring-avg-reducer</module>
 		<module>pulse-monitoring-jumps-notifier</module>
 		<module>pulse-monitoring-notification-data-provider</module>
+		<module>pulse-monitoring-avg-populator</module>
+		<module>pulse-monitoring-avg-values-back-office</module>
+		<module>pulse-monitoring-visits-back-office</module>
+		<module>pulse-monitoring-configuration-server</module>
+		<module>pulse-monitoring-gateway</module>
 	</modules>
 </project>
